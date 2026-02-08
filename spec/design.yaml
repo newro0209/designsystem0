@@ -1,0 +1,448 @@
+# 🎮 Game-Like Design System Specification
+# Single Source of Truth for iOS & Android Renderers
+
+version: "1.0.0"
+name: "GameLobbyDesignSystem"
+
+# ==========================================
+# TOKENS - Design Foundation
+# ==========================================
+tokens:
+  # Elevation levels for z-ordering
+  elevation:
+    z0: 0
+    z1: 1
+    z2: 2
+    z3: 3
+    z4: 4
+    z5: 5
+  
+  # Motion timing (milliseconds)
+  motion:
+    fast: 120
+    normal: 240
+    emphasis: 400
+    slow: 600
+  
+  # Color palette
+  colors:
+    primary: "#6366F1"
+    secondary: "#8B5CF6"
+    success: "#10B981"
+    error: "#EF4444"
+    warning: "#F59E0B"
+    background: "#0F172A"
+    surface: "#1E293B"
+    text_primary: "#F8FAFC"
+    text_secondary: "#94A3B8"
+  
+  # Typography scale
+  typography:
+    title_large: 32
+    title_medium: 24
+    title_small: 20
+    body_large: 18
+    body_medium: 16
+    body_small: 14
+    caption: 12
+  
+  # Spacing scale
+  spacing:
+    xs: 4
+    sm: 8
+    md: 16
+    lg: 24
+    xl: 32
+    xxl: 48
+
+# ==========================================
+# STATE MACHINE - Universal UI States
+# ==========================================
+state_machine:
+  states:
+    - idle       # Default resting state
+    - focus      # Highlighted/hovering
+    - pressed    # Being pressed
+    - active     # Currently active/selected
+    - rewarded   # Success/reward animation
+    - error      # Error state
+    - disabled   # Inactive/unavailable
+  
+  transitions:
+    - from: idle
+      to: [focus, pressed, active, disabled]
+    - from: focus
+      to: [idle, pressed, disabled]
+    - from: pressed
+      to: [idle, active, rewarded, error]
+    - from: active
+      to: [idle, rewarded, disabled]
+    - from: rewarded
+      to: [idle, active]
+    - from: error
+      to: [idle]
+    - from: disabled
+      to: [idle]
+
+# ==========================================
+# ENTITIES - UI Components
+# ==========================================
+entities:
+  # Primary Button
+  button:
+    type: interactive
+    states:
+      idle:
+        visual:
+          scale: 1.0
+          glow: 0.2
+          opacity: 1.0
+          color: "primary"
+        animation:
+          duration: "motion.normal"
+          curve: "easeOut"
+      
+      focus:
+        visual:
+          scale: 1.05
+          glow: 0.5
+          opacity: 1.0
+          elevation: "z2"
+        animation:
+          duration: "motion.fast"
+          curve: "easeInOut"
+      
+      pressed:
+        visual:
+          scale: 0.92
+          glow: 0.8
+          opacity: 0.9
+        animation:
+          duration: "motion.fast"
+          curve: "easeIn"
+        feedback:
+          haptic: "light"
+          sound: "tap"
+      
+      active:
+        visual:
+          scale: 1.0
+          glow: 0.6
+          opacity: 1.0
+          color: "success"
+        animation:
+          duration: "motion.normal"
+          curve: "spring"
+      
+      rewarded:
+        visual:
+          scale: 1.15
+          glow: 1.0
+          opacity: 1.0
+          particles: true
+        animation:
+          duration: "motion.emphasis"
+          curve: "bounceOut"
+        feedback:
+          haptic: "heavy"
+          sound: "reward"
+      
+      error:
+        visual:
+          scale: 1.0
+          glow: 0.3
+          opacity: 1.0
+          color: "error"
+          shake: true
+        animation:
+          duration: "motion.normal"
+          curve: "linear"
+        feedback:
+          haptic: "rigid"
+          sound: "error"
+      
+      disabled:
+        visual:
+          scale: 1.0
+          glow: 0.0
+          opacity: 0.4
+        animation:
+          duration: "motion.normal"
+          curve: "easeOut"
+  
+  # Floating Card
+  card:
+    type: container
+    states:
+      idle:
+        visual:
+          elevation: "z1"
+          scale: 1.0
+          glow: 0.1
+          opacity: 1.0
+        animation:
+          duration: "motion.normal"
+          curve: "easeOut"
+      
+      focus:
+        visual:
+          elevation: "z3"
+          scale: 1.03
+          glow: 0.4
+          opacity: 1.0
+        animation:
+          duration: "motion.fast"
+          curve: "easeInOut"
+        feedback:
+          haptic: "light"
+      
+      pressed:
+        visual:
+          elevation: "z2"
+          scale: 0.98
+          glow: 0.2
+        animation:
+          duration: "motion.fast"
+          curve: "easeIn"
+        feedback:
+          haptic: "medium"
+          sound: "tap"
+      
+      active:
+        visual:
+          elevation: "z4"
+          scale: 1.0
+          glow: 0.6
+          opacity: 1.0
+        animation:
+          duration: "motion.emphasis"
+          curve: "spring"
+      
+      disabled:
+        visual:
+          elevation: "z0"
+          scale: 1.0
+          glow: 0.0
+          opacity: 0.5
+        animation:
+          duration: "motion.normal"
+          curve: "easeOut"
+  
+  # Panel
+  panel:
+    type: container
+    states:
+      idle:
+        visual:
+          elevation: "z2"
+          scale: 1.0
+          opacity: 1.0
+          blur_background: true
+        animation:
+          duration: "motion.normal"
+          curve: "easeOut"
+      
+      focus:
+        visual:
+          elevation: "z3"
+          scale: 1.0
+          opacity: 1.0
+        animation:
+          duration: "motion.fast"
+          curve: "easeInOut"
+      
+      active:
+        visual:
+          elevation: "z5"
+          scale: 1.0
+          opacity: 1.0
+        animation:
+          duration: "motion.emphasis"
+          curve: "spring"
+  
+  # Energy Bar
+  energy_bar:
+    type: indicator
+    states:
+      idle:
+        visual:
+          fill: 1.0
+          glow: 0.3
+          pulse: false
+        animation:
+          duration: "motion.normal"
+          curve: "linear"
+      
+      active:
+        visual:
+          fill: 1.0
+          glow: 0.6
+          pulse: true
+        animation:
+          duration: "motion.slow"
+          curve: "easeInOut"
+      
+      error:
+        visual:
+          fill: 0.2
+          glow: 0.5
+          color: "error"
+          shake: true
+        animation:
+          duration: "motion.fast"
+          curve: "linear"
+        feedback:
+          haptic: "medium"
+  
+  # HUD Navigation
+  hud_navigation:
+    type: navigation
+    states:
+      idle:
+        visual:
+          elevation: "z5"
+          opacity: 0.95
+          blur_background: true
+        animation:
+          duration: "motion.normal"
+          curve: "easeOut"
+      
+      focus:
+        visual:
+          elevation: "z5"
+          opacity: 1.0
+          glow: 0.3
+        animation:
+          duration: "motion.fast"
+          curve: "easeInOut"
+
+# ==========================================
+# MOTIONS - Predefined Animations
+# ==========================================
+motions:
+  EnterLobby:
+    description: "Screen entrance animation"
+    duration: "motion.emphasis"
+    curve: "easeOut"
+    effects:
+      - type: "scale"
+        from: 0.8
+        to: 1.0
+      - type: "opacity"
+        from: 0.0
+        to: 1.0
+      - type: "blur"
+        from: 20.0
+        to: 0.0
+  
+  FocusCard:
+    description: "Card focus animation"
+    duration: "motion.fast"
+    curve: "easeInOut"
+    effects:
+      - type: "elevation"
+        from: "z1"
+        to: "z3"
+      - type: "scale"
+        from: 1.0
+        to: 1.03
+      - type: "glow"
+        from: 0.1
+        to: 0.4
+  
+  OpenPanel:
+    description: "Panel opening animation"
+    duration: "motion.emphasis"
+    curve: "spring"
+    effects:
+      - type: "translateY"
+        from: 100
+        to: 0
+      - type: "opacity"
+        from: 0.0
+        to: 1.0
+      - type: "scale"
+        from: 0.9
+        to: 1.0
+  
+  RewardBurst:
+    description: "Reward celebration animation"
+    duration: "motion.slow"
+    curve: "bounceOut"
+    effects:
+      - type: "scale"
+        from: 1.0
+        to: 1.2
+        then: 1.0
+      - type: "rotation"
+        from: 0
+        to: 360
+      - type: "particles"
+        count: 20
+        spread: 360
+      - type: "glow"
+        from: 0.5
+        to: 1.0
+        then: 0.5
+  
+  ErrorShake:
+    description: "Error shake animation"
+    duration: "motion.fast"
+    curve: "linear"
+    effects:
+      - type: "translateX"
+        keyframes: [0, -10, 10, -10, 10, -5, 5, 0]
+      - type: "color"
+        from: "primary"
+        to: "error"
+
+# ==========================================
+# FEEDBACK - Haptic & Sound
+# ==========================================
+feedback:
+  haptic:
+    light:
+      ios: "UIImpactFeedbackGenerator.light"
+      android: "HapticFeedbackConstants.KEYBOARD_TAP"
+    
+    medium:
+      ios: "UIImpactFeedbackGenerator.medium"
+      android: "HapticFeedbackConstants.VIRTUAL_KEY"
+    
+    heavy:
+      ios: "UIImpactFeedbackGenerator.heavy"
+      android: "HapticFeedbackConstants.LONG_PRESS"
+    
+    rigid:
+      ios: "UIImpactFeedbackGenerator.rigid"
+      android: "HapticFeedbackConstants.REJECT"
+  
+  sound:
+    tap:
+      file: "tap.wav"
+      volume: 0.5
+    
+    reward:
+      file: "reward.wav"
+      volume: 0.8
+    
+    error:
+      file: "error.wav"
+      volume: 0.6
+
+# ==========================================
+# RENDERING HINTS
+# ==========================================
+rendering:
+  ios:
+    base_layer: "CALayer"
+    glow_technique: "Metal Shader"
+    animation_engine: "CoreAnimation"
+    particle_system: "Metal Particle Emitter"
+  
+  android:
+    base_view: "Custom View"
+    drawing_api: "Canvas"
+    glow_technique: "RuntimeShader / RenderEffect"
+    animation_engine: "Choreographer"
+    particle_system: "Canvas Particle System"

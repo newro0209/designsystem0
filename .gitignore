@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+*.egg-info/
+
+# iOS
+.DS_Store
+*.xcuserstate
+*.xcworkspace
+xcuserdata/
+DerivedData/
+build/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Android
+*.iml
+.gradle
+local.properties
+.idea/
+build/
+captures/
+.externalNativeBuild
+.cxx
+*.apk
+*.ap_
+*.aab
+
+# Generated files (keep these in repo as they're part of the design system)
+# ios/generated/
+# android/generated/
+
+# Temporary files
+*.swp
+*.swo
+*~
+.tmp/
+tmp/
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# OS
+Thumbs.db
+.DS_Store
